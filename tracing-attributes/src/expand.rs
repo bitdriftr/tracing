@@ -239,14 +239,9 @@ fn gen_block<B: ToTokens>(
     let err_event = match args.err_args {
         Some(event_args) => {
             let level_tokens = event_args.level(Level::Error);
-            match event_args.mode {
-                FormatMode::Default | FormatMode::Display => Some(quote!(
-                    tracing::event!(target: #target, #level_tokens, error = %e)
-                )),
-                FormatMode::Debug => Some(quote!(
-                    tracing::event!(target: #target, #level_tokens, error = ?e)
-                )),
-            }
+            Some(quote!(
+                tracing::event!(name: "exception", target: #target, #level_tokens, exception.type = %e, exception.message = %e, exception.stacktrace = ?e)
+            ))
         }
         _ => None,
     };
